@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "Bullet Narrative Compiler"
+  short_description: "Turn fragmented bullets into cohesive thesis paragraphs"
+  default_prompt: "Use $bullet-to-paragraph-compiler to convert these technical bullet notes into cohesive thesis-ready paragraphs."

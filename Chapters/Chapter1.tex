@@ -1,71 +1,55 @@
-%!TEX root=../mythesis.tex
+﻿%!TEX root=../mythesis.tex
 % Chapter 1
 
-\chapter{Introduction} % Main chapter title
+\chapter{Introduction}
 \chaptermark{Introduction}
-\label{ch:introduction} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+\label{ch:introduction}
 
-%----------------------------------------------------------------------------------------
-%	SECTION 1
-%----------------------------------------------------------------------------------------
+\section{Background}
 
-\section{Some useful hints}
-
-My figure citation: \fref{fig:demo1}. (command: fref)
-
-My section citation: \sref{sec:contribution}. (command: sref)
-
-My Chaptere citation: \cref{ch:introduction}. (command: cref)
-
-My Paper citation: \cite{bauschke2011convex}. (notice back reference to page from bibliograph)
-
-My equation citation: \eqref{eq:equ2}. (command: eqref), or cite equation by tag: \eqref{eq:equ1}.
-
-\begin{equation}\label{eq:equ1}
-F(\theta)=\sum_{i=1}^mf_i(\theta) \tag{DOP}
-\end{equation}
-
-\begin{equation}\label{eq:equ2}
-F(\theta)=\sum_{i=1}^mf_i(\theta)
-\end{equation}
-
-\begin{figure}[htbp]
-  \centering
-    \includegraphics[width=0.85\textwidth]{Chapter1/demo1}
-  \caption{An illustration.}
-  \label{fig:demo1}
-\end{figure}
-
-
-
-%----------------------------------------------------------------------------------------
-\section{Major Contributions}\label{sec:contribution}
-Our main contributions can be stated as follows:
 \begin{itemize}
-\item \emph{First part}: My first contributions, several lines
-
-
-\item \emph{Second}: Second contributions, several lines
-
-
-\item \emph{Third name}: 
-Third contributions, several lines
-
+\item The importance of industrial-scale energy transition motivates solutions for hard-to-abate industries through Power-to-X.
+\item This complex industrial process, especially with the unpredictability of renewable energy sources, is financially intensive and requires optimization strategies to minimize investment and operational dispatch costs.
+\item The current robust conventional optimization strategy, MILP, is the industrial standard for optimizing these processes. However, the rise of AI applications across industries has motivated researchers to explore machine learning, specifically reinforcement learning, to optimize dispatch strategy as an agentic plant manager.
+\item It is also evident that MILP simplifies complex systems into linear representatives, which can reduce result accuracy. One example is hydrogen tank operation, where the relation between hydrogen level and efficiency is non-linear due to compression energy requirements at higher tank levels. Therefore, this thesis also observes the effect of integrating this detail into the proposed system and its impact on the techno-economic results produced by the RL agent.
+\item This level of detail and complexity is not possible to integrate in a MILP problem, which can be a significant limitation for a complex polygeneration system with crucial non-linear behavior across components and reactions.
+\item Most available studies currently focus on comparing these two frameworks in simple energy systems with fewer than four decision variables. This study pushes that boundary by observing results with roughly twice as many decision variables.
+\item In addition, other studies combine control and design optimization into one optimization problem, whereas this study adopts a two-step outerloop and innerloop approach to obtain combined optimized sizing and dispatch results.
 \end{itemize}
 
-%----------------------------------------------------------------------------------------
-% SECTION 2
-%----------------------------------------------------------------------------------------
-\section{Outline of the Thesis}
+This thesis compares the techno-economic results produced by an RL agent against a conventional MILP framework for a hybrid biomass power-to-methanol plant in South Africa across different scenarios and case studies. The goal is to understand the role of RL in complex Power-to-X industrial processes and benchmark its current performance against an industrial-standard framework.
 
-\cref{ch:introduction} introduces ...
+\section{Introduction to Company}
 
-\cref{ch:literature_review} reviews ...
+\begin{itemize}
+\item This master's thesis research is conducted at FEV Europe GmbH in the energy+resources department.
+\item FEV Europe GmbH is a leading expert in automotive industries, known for benchmarking and consulting services, and is now supporting innovation in the energy sector.
+\item This thesis supports identification of an efficient optimization tool for innovative energy solutions in complex polygeneration plants for future FEV Europe GmbH projects.
+\end{itemize}
 
+\section{Objective}
 
+\begin{itemize}
+\item Run and analyze the two optimization frameworks under different scenarios.
+\item Evaluate whether a non-linear physical model with an RL agent converges to significantly different component sizing/layout than MILP, and whether this changes techno-economic performance metrics such as CAPEX, OPEX, and LCOM.
+\item Identify reasons behind discrepancies, or lack thereof, depending on simulation outcomes.
+\item Conclude whether one framework is better overall or whether suitability is scenario-dependent.
+\end{itemize}
 
-More chapters ....
+Expected impact:
 
+\begin{itemize}
+\item Better framework selection for hybrid methanol synthesis plants.
+\item Easier optimal-framework identification for other industrial systems.
+\item Increased accuracy or reduced effort for similar optimization processes.
+\item Better understanding of where and how RL agents should be applied in polygeneration systems.
+\end{itemize}
 
-....
+\section{Thesis Configuration}
 
+\begin{itemize}
+\item Chapter 2 discusses state-of-the-art research on RL for optimizing complex industrial processes or power systems, and introduces related comparative studies from the literature.
+\item Chapter 3 presents the steps used to compare these optimization frameworks. The comparison is conducted in multiple stages and explained in detail.
+\item Chapter 4 presents multistage comparison results for different scenarios and case studies, and introduces a generalization scoring approach to compare framework performance across aspects.
+\item Chapter 5 summarizes general findings while acknowledging limitations, assumptions, and considerations adopted in this thesis.
+\end{itemize}

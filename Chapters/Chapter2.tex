@@ -1,81 +1,94 @@
-%!TEX root=../mythesis.tex
-% Chapter Template
+﻿%!TEX root=../mythesis.tex
+% Chapter 2
 
-\chapter{Literature Review} % Main chapter title
-\chaptermark{Literature Review}  % replace the chapter name with its abbreviated form
-\label{ch:literature_review} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\chapter{Literature Review}
+\chaptermark{Literature Review}
+\label{ch:literature_review}
 
-%\lhead{Chapter X. \emph{Chapter Title Here}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
-%-----------------------------------
-% SECTION 1
-%-----------------------------------
+\section{Power-to-X Integration for Methanol Synthesis System}
 
-\section{Part 1}
+Different definitions of linearity and non-linearity for methanol synthesis systems are discussed in the literature.
 
-When you cite a paper \cite{bauschke2011convex}, the back reference from bibgraph will apper as page number.
+\section{MILP for Complex Polygeneration System}
 
-You can also cite paper with author name using the command `citet': such as: \citet{bauschke2011convex}.
+This section is kept as a placeholder and will be expanded with detailed MILP-specific discussion.
 
-\section{Part 2}
+\section{State-of-the-art RL in Optimizing Energy System and Industrial Processes}
 
-cite another paper \cite{DynamicOptim_Opportunities_challenges}.
+The adoption of RL to optimize energy systems and industrial processes has attracted significant attention due to flexibility and adaptability \cite{stavrev2024rlTechniques}. By directly interacting with the system, an RL agent derives strategies through a Markov Decision Process (MDP). This process involves dynamic evolution of states, actions, transition probabilities, and rewards at each time step.
 
-\begin{lemma}[My lemma]
-	A great lemma.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{lemma}
+\begin{itemize}
+\item Diagram of MDP process.
+\end{itemize}
 
-\begin{theorem}[My theorem]
-	A great theorem.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{theorem}
+The main objective of an agent is to maximize the discounted sum of reward from time $t$ to infinity.
 
-\begin{proof}
-	The proof is intuitive.
-\end{proof}
+% TODO: verify against Word equation
+\begin{equation}
+\label{eq:discounted_return}
+R_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}
+\end{equation}
 
-\begin{corollary}[My corollary]
-	A great corollary.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{corollary}
+The agent navigates actions using a policy $\pi$, which determines what to do at each state. Each policy has an associated state-value function $V^{\pi}(s)$.
 
-\begin{proposition}[My proposition]
-	A great proposition.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{proposition}
+% TODO: verify against Word equation
+\begin{equation}
+\label{eq:state_value}
+V^{\pi}(s) = \mathbb{E}_{\pi}[R_t \mid s_t = s]
+\end{equation}
 
-\begin{example}[My example]
-	A great example.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{example}
+The optimal value function is defined over all policies.
 
-\begin{definition}[My definition]
-	A great definition.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{definition}
+% TODO: verify against Word equation
+\begin{equation}
+\label{eq:optimal_state_value}
+V^{*}(s) = \max_{\pi} V^{\pi}(s)
+\end{equation}
 
-\begin{assumption}[My assumption]
-	A great assumption.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{assumption}
+Another related variable is the action-value function $Q^{\pi}(s,a)$.
 
-\begin{remark}[My remark]
-	A great remark.
-	\begin{equation}
-		c^2=a^2+b^2
-	\end{equation}
-\end{remark}
+% TODO: verify against Word equation
+\begin{equation}
+\label{eq:action_value}
+Q^{\pi}(s,a) = \mathbb{E}_{\pi}[R_t \mid s_t = s, a_t = a]
+\end{equation}
+
+Its optimal form is defined as follows.
+
+% TODO: verify against Word equation
+\begin{equation}
+\label{eq:optimal_action_value}
+Q^{*}(s,a) = \max_{\pi} Q^{\pi}(s,a)
+\end{equation}
+
+In short, an optimal policy $\pi^*$ is one whose state-value function equals the optimal state value.
+
+% TODO: verify against Word equation
+\begin{equation}
+\label{eq:optimal_policy}
+\pi^{*} = \arg\max_{\pi} V^{\pi}(s)
+\end{equation}
+
+\begin{itemize}
+\item Diagram of these variables as an MDP process (to be recreated from literature).
+\end{itemize}
+
+Accurate environment dynamics modeling through MDPs is emphasized by many researchers to obtain robust frameworks and good results \cite{langford2011efficientExploration}. This supports RL use for complex and dynamic environments such as polygeneration plants.
+
+\begin{itemize}
+\item Examples of RL agents used in energy-system optimization.
+\end{itemize}
+
+Different RL algorithm families are commonly used for complex energy-system optimization: value-based, policy-based, and actor-critic. They differ mainly by learning mechanism. Value-based RL learns a value estimate, commonly $Q(s,a)$, then chooses actions with highest estimated value. Typical examples include Q-learning and DQN \cite{liu2020overviewValuePolicy}. A related study argues value-function methods can face convergence issues in continuous multivariate settings, where they are less suitable than in discrete cases \cite{lincoln2012comparingPolicyGradient}.
+
+Policy-based RL learns the policy directly, parameterizing the action rule and searching for an optimal policy, including methods such as policy gradients and PPO \cite{gao2025policyGradientMethods}. Because many energy problems are continuous, high-dimensional, and constrained, policy-based approaches are often preferred \cite{cao2020rlApplicationsPowerEnergy}.
+
+Actor-critic methods combine both views: the actor learns policy and the critic learns value estimates to stabilize training. Earlier literature adopted Q-learning more frequently, while recent work increasingly applies actor-critic and other deep RL variants to complex control tasks \cite{shengren2022performanceComparison}. Common algorithms include PPO, SAC, A3C, TD3, and DDPG.
+
+\section{RL vs MILP for Different Applications}
+
+Recent literature provides several RL-vs-MILP benchmarks for energy systems. Vetter et al. \cite{vetter2025deepReinforcementMILP} compared DQN-based RL against MILP for dispatch optimization in a Grid-PV-TES energy community system with fixed sizing. RL controlled TES SOC, while MILP optimized detailed power flows. Both reduced annual cost versus baseline, with MILP showing larger cost reduction. RL, however, performed better on some additional metrics such as CO$_2$ reduction, self-consumption ratio, and self-sufficiency ratio because it tended to consume more PV generation.
+
+Beyond dispatch-only benchmarking, Cauz et al. \cite{cauz2023reinforcementJointDesign} compared RL and MILP under both design and control decisions in Battery-PV systems. The RL algorithm used was Direct Environment and Policy Search (DEPS). Design decisions were battery and PV sizing; control decisions were battery and grid dispatch. In stage one (one-week case), both approaches converged under fixed sizing. Under joint design-control optimization, RL initially appeared cheaper, but this was traced to modeling limitations (missing end-SOC consistency). After correcting assumptions, MILP became cheaper, highlighting the importance of matched assumptions for fair comparison.
+
+In stage two (one-year case), RL remained more expensive than MILP under both fixed-sizing and joint design-control scenarios, while producing substantially different design choices. The study attributes this to multiple causes, including hyperparameter sensitivity and algorithm selection.

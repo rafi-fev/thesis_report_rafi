@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "Prose Polish Enhancer"
+  short_description: "Refine thesis prose without altering technical claims"
+  default_prompt: "Use $context-aware-prose-polish-style-enhancer to improve this thesis paragraph while preserving all LaTeX syntax and citations."

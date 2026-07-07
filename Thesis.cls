@@ -203,15 +203,15 @@
 
 %Your thesis title - this is used in the title and abstract
 %-------------------------------------------------
-\thesistitle{\href{https://github.com/wang-chen/thesis_template_ntu}{The Greatest Thesis in the World}} %
+\thesistitle{Optimization Frameworks for Hybrid Biomass Power-to-Methanol System: MILP and Reinforcement Learning Approaches} %
 %-------------------------------------------------
 \supervisor{Prof. Einstein \textsc{XXX}} % You supervisor's name - this is used in the title page
 %-------------------------------------------------
 \examiner{} % Your examiner's name - this is not currently used anywhere in the template, cite it with \examname if you want it
 %-------------------------------------------------
-\degree{Doctor of Philosophy} % Your degree name - this is currently used in the title page and abstract
+\degree{Master of Science in Energy and Nuclear Engineering} % Your degree name - this is currently used in the title page and abstract
 %-------------------------------------------------
-\authors{\href{https://wang-chen.github.io}{Author Name}} % Your name - this is used in the title page and abstract
+\authors{Muhammad Rafi Afif Indrajaya} % Your name - this is used in the title page and abstract
 %-------------------------------------------------
 \addresses{} % Your address - this is not currently used anywhere in the template, cite it with \addressnames if you want it
 %-------------------------------------------------
@@ -219,15 +219,15 @@
 %-------------------------------------------------
 \keywords{} % Keywords for your thesis - this is not currently used anywhere in the template, cite it with \keywordnames if you want it
 %-------------------------------------------------
-\university{\texorpdfstring{\href{http://www.university.com} % Your university's URL
+\university{\texorpdfstring{\href{https://www.polito.it/en} % Your university's URL
                 {University Name}} % Your university's name - this is currently used in the title page
                 {University Name}}
 %-------------------------------------------------
-\UNIVERSITY{\texorpdfstring{\href{http://www.ntu.edu.sg/} % Your university's URL
+\UNIVERSITY{\texorpdfstring{\href{https://www.polito.it/en} % Your university's URL
                 {UNIVERSITY NAME (IN BLOCK CAPITALS)}} % Your university's name in capitals - this is currently used in the abstract page
                 {UNIVERSITY NAME (IN BLOCK CAPITALS)}}
 %-------------------------------------------------
-\department{\texorpdfstring{\href{http://www.eee.ntu.edu.sg} % Your department's URL
+\department{\texorpdfstring{\href{https://www.polito.it/en} % Your department's URL
                 {School of Electrical \& Electronic Engineering}} % Your department's name - used in the title page and abstract
                 {Department or School Name}}
 %-------------------------------------------------
@@ -273,13 +273,14 @@
   \textbf{\LARGE \newline \rule{\linewidth}{2pt}\\\vspace{-7pt}\ttitle\\\rule{\linewidth}{2pt}}\\% Thesis title
   % \setstretch{1.5}
   \vfill
-  \href{http://www.ntu.edu.sg}{\includegraphics[width=230pt]{Styles/ntu_logo}}\\%[2cm]
+  \includegraphics[width=230pt]{Styles/polito_logo}\\%[2cm]
   \vfill
   \textbf{\Large \authornames}\\%[1.2cm]
-  {\large \deptname}\\%[1.2cm] % University name
+  {\large Erasmus Mundus Decentralized Smart Energy System (DENSYS)}\\
+  {\large Department of Energy}\\
+  {\large Politecnico di Torino}\\%[1.2cm]
   \vfill
   \setstretch{1.2}
-  \large A thesis submitted to the Nanyang Technological University \\ in partial fulfillment of the requirements for the degree of\\ \degreename\\[1cm] % University requirement text
   {\large\bf \the\year}\\[2cm] % Date
   \end{center}
   \end{titlepage}
@@ -299,12 +300,12 @@
 			\vfill
 			\textbf{\LARGE \newline \ttitle}\\% Thesis title
 			\vfill
-			\textbf{\Large \textbf{\authornames}}\\[1cm]
+			\textbf{\Large \textbf{\authornames}}\\[0.6cm]
 			\vfill
-			{\large \textbf{\deptname}}\\%[1.2cm] % University name
-			[1.2cm]
+			{\large Erasmus Mundus Decentralized Smart Energy System (DENSYS)}\\
+			{\large Department of Energy}\\
+			{\large Politecnico di Torino}\\[1.2cm]
 			\setstretch{1.2}
-			\large A thesis submitted to the Nanyang Technological University \\ in partial fulfillment of the requirements for the degree of\\ \degreename\\[1cm] % University requirement text
 			{\large\bf \the\year}\\[2cm] % Date
 		\end{center}
 	\end{titlepage}
@@ -458,8 +459,6 @@
 		\vspace{2.5cm}
 		\begin{center}
 			\makebox[4cm]{#2}  \hfill
-      \tikz[remember picture,overlay] 
-      \node[opacity=0.9,inner sep=0pt]at (2.13, 0.5) {\includegraphics[width=4cm,height=1.527cm]{Styles/ntu-watermark.png}};
       \makebox[4cm]{\includegraphics[height=0.9cm]{#3}}\\
 		\end{center}
 		\vspace{-1.8cm}
@@ -480,8 +479,6 @@
 		\vspace{2.5cm}
 		\begin{center}
 			\makebox[4cm]{#2}  \hfill
-      \tikz[remember picture,overlay] 
-      \node[opacity=0.9,inner sep=0pt]at (2.13, 0.5) {\includegraphics[width=4cm,height=1.527cm]{Styles/ntu-watermark.png}};
 			\makebox[4cm]{\includegraphics[height=0.9cm]{#3}}\\
 		\end{center}
 		\vspace{-1.8cm}
@@ -505,8 +502,6 @@
 		\vspace{2.5cm}
 		\begin{center}
 			\makebox[4cm]{#3}  \hfill
-      \tikz[remember picture,overlay] 
-      \node[opacity=0.9,inner sep=0pt]at (2.13, 0.5) {\includegraphics[width=4cm,height=1.527cm]{Styles/ntu-watermark.png}};
 			\makebox[4cm]{\includegraphics[height=0.9cm]{#4}}\\
 		\end{center}
 		\vspace{-1.8cm}

@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "Truth Anchor Compiler"
+  short_description: "Draft strictly from provided context and references.bib"
+  default_prompt: "Use $closed-prompt-truth-anchor to draft this section using only the provided text and bibliography context."

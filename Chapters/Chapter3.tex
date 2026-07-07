@@ -1,41 +1,130 @@
-%!TEX root=../mythesis.tex
-% Chapter Template
+﻿%!TEX root=../mythesis.tex
+% Chapter 3
 
-\chapter{Chapter3 Name} % Main chapter title
-\chaptermark{Distributed Optimization in Networked Systems}  % replace the chapter name with its abbreviated form
-\label{ch:doptim_netsys} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
+\chapter{Methodology}
+\chaptermark{Methodology}
+\label{ch:methodology}
 
+\section{Hybrid Biomass Power-to-Methanol System Model}
 
+\begin{itemize}
+\item Energy system definition.
+\item Technical parameters definition.
+\item Economical parameters definition.
+\end{itemize}
 
-%-----------------------------------
-% SECTION 1
-%-----------------------------------
+\section{Two-steps Outerloop \& Innerloop Strategy}
 
-\section{Section1}\label{sec:top_opt_model}
+The methodology adopts a two-step strategy in which layout/sizing and operational dispatch decisions are decomposed into outerloop and innerloop problems to improve tractability and interpretability.
 
- 
-See \fref{fig:demo2}
+\section{Level 2 Optimization Architecture (MILP)}
 
-\begin{figure}[!htbp]
-  \centering
-    \includegraphics[width=0.4\linewidth]{Chapter2/demo1}
-  \caption{Another illustration.}
-  \label{fig:demo2}
-\end{figure}
+\begin{itemize}
+\item Component-level non-linear modeling logic.
+\item Operation logic.
+\item Modeling tool: \texttt{oemof.solph}.
+\item Solver: CBC.
+\item Objective function definition.
+\end{itemize}
 
-Let's cite out first table: \tref{tab:mytable}.
+\section{Level 3 Optimization Architecture (RL)}
 
-\begin{table}
-	\centering
-	\begin{tabular}{ccccc}\toprule
-		\multirow{2}{*}{Table}  & \multicolumn{2}{c}{Group 1}   & \multicolumn{2}{c}{Group 2}\\
-		& Col 1   &  Col 2 & Col 1   &  Col 2 \\\midrule
-		Row 1 & 14.37 & \textbf{5.76} & 2.65 & \textbf{2.84}\\
-		Row 2   & 5.43 & \textbf{7.36}     & 2.22 & \textbf{2.49}\\ 
-		Row 3 & 5.54 & \textbf{5.68}   & \textbf{4.42} &  2.92\\
-		\bottomrule
-	\end{tabular}
-	\caption{My Table.}
-	\label{tab:mytable}
-\end{table}
+\begin{itemize}
+\item Component-level linear modeling logic.
+\item Chosen RL algorithm.
+\item Operation logic (MDP).
+\item Integration of Bayesian Optimization (BO) and RL.
+\item Objective function definition (reward function).
+\end{itemize}
 
+\section{Data}
+
+This section is reserved for dataset sources, preprocessing, assumptions, and scenario-specific inputs.
+
+\section{Comparison Stages \& Scenario Definition}
+
+This comparison is conducted in two steps:
+
+\begin{itemize}
+\item \textbf{Outerloop comparison}
+\begin{itemize}
+\item Innerloop operational decision is fixed as an \texttt{oemof} problem.
+\item For outerloop (layout selection fed into innerloop), different tools are compared: \texttt{oemof} investment block (IB), Bayesian Optimization (BO), and Design of Experiment (DOE).
+\item Objective: identify which approach gives the best layout under both linear and non-linear economies of scale.
+\item Components to optimize: electricity supply and Power-to-X blocks.
+\end{itemize}
+
+\item \textbf{Innerloop comparison}
+\begin{itemize}
+\item Compare RL dispatch in a physics-based plant model against \texttt{oemof} dispatch in a linear model.
+\item Stage 1 (fixed outerloop, linear model with RL): evaluate how close RL can optimize a linear model compared to Level 2 MILP.
+\item Stage 2 (fixed outerloop, non-linear model with RL): evaluate behavior when optimized linear layouts are injected into a physics-based model, including feasibility and performance changes.
+\item Stage 3 (joint outerloop + innerloop): compare BO+RL non-linear pathway vs BO+\texttt{oemof} linear pathway.
+\end{itemize}
+\end{itemize}
+
+Case studies for each step (especially innerloop stage comparisons):
+
+\begin{itemize}
+\item \textbf{Weather variability}
+\begin{itemize}
+\item Stable solar and wind input.
+\item Extreme weather volatility.
+\end{itemize}
+\item \textbf{Market conditions}
+\begin{itemize}
+\item Cheap batteries.
+\item Cheap hydrogen system (e.g., -50\%, -20\%, +20\%, +50\%).
+\end{itemize}
+\item \textbf{System design and flexibility}
+\begin{itemize}
+\item Heavy fixed methanol reactor load.
+\item Heavy fixed electrolyzer load.
+\end{itemize}
+\end{itemize}
+
+For each step, stage, and case study, predetermined KPIs are examined:
+
+\begin{itemize}
+\item \textbf{Techno-economic level}
+\begin{itemize}
+\item LCOM.
+\item CAPEX and OPEX.
+\item Carbon intensity.
+\item Grid dependency ratio.
+\item Self-consumption ratio.
+\item Autonomy days.
+\end{itemize}
+\item \textbf{Framework level}
+\begin{itemize}
+\item Simulation time.
+\item BO distance.
+\end{itemize}
+\item \textbf{Scenario descriptors}
+\begin{itemize}
+\item Year.
+\item CAPEX and OPEX per component.
+\item Conversion factor per component.
+\end{itemize}
+\item \textbf{Fixed components}
+\begin{itemize}
+\item MeOH reactor.
+\item Distillery.
+\item MeOH storage.
+\item Anaerobic digester.
+\item ATR.
+\item O$_2$ storage (full ATR-load sizing for 3 days).
+\item Steam generator.
+\item Auxiliary units: RWGS, fuel boiler, AD gas separator, compressor, and three heat exchangers.
+\end{itemize}
+\item \textbf{Variable components (IB vs BO vs DOE)}
+\begin{itemize}
+\item CH$_4$ generator or gas turbine.
+\item Wind turbine.
+\item PV.
+\item BESS.
+\item Electrolyzer.
+\item Hydrogen storage.
+\item Biogas storage.
+\end{itemize}
+\end{itemize}

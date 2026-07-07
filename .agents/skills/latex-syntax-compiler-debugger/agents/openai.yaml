@@ -1,0 +1,4 @@
+﻿interface:
+  display_name: "LaTeX Debug Syntactician"
+  short_description: "Locate and fix LaTeX compile and table syntax errors"
+  default_prompt: "Use $latex-syntax-compiler-debugger to isolate this compilation error and provide the minimal LaTeX fix without changing wording."
