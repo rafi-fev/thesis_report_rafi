@@ -7,49 +7,22 @@
 
 \section{Background}
 
-\begin{itemize}
-\item The importance of industrial-scale energy transition motivates solutions for hard-to-abate industries through Power-to-X.
-\item This complex industrial process, especially with the unpredictability of renewable energy sources, is financially intensive and requires optimization strategies to minimize investment and operational dispatch costs.
-\item The current robust conventional optimization strategy, MILP, is the industrial standard for optimizing these processes. However, the rise of AI applications across industries has motivated researchers to explore machine learning, specifically reinforcement learning, to optimize dispatch strategy as an agentic plant manager.
-\item It is also evident that MILP simplifies complex systems into linear representatives, which can reduce result accuracy. One example is hydrogen tank operation, where the relation between hydrogen level and efficiency is non-linear due to compression energy requirements at higher tank levels. Therefore, this thesis also observes the effect of integrating this detail into the proposed system and its impact on the techno-economic results produced by the RL agent.
-\item This level of detail and complexity is not possible to integrate in a MILP problem, which can be a significant limitation for a complex polygeneration system with crucial non-linear behavior across components and reactions.
-\item Most available studies currently focus on comparing these two frameworks in simple energy systems with fewer than four decision variables. This study pushes that boundary by observing results with roughly twice as many decision variables.
-\item In addition, other studies combine control and design optimization into one optimization problem, whereas this study adopts a two-step outerloop and innerloop approach to obtain combined optimized sizing and dispatch results.
-\end{itemize}
+As hard-to-abate sectors advance their industrial-scale energy transition, Power-to-X solutions have become increasingly relevant. Yet these processes remain financially intensive because renewable energy availability is unpredictable and strongly influences both investment sizing and operational dispatch. In practice, MILP remains the robust industrial standard for optimizing such systems, while the broader rise of AI applications has motivated researchers to examine reinforcement learning as a decision-making agent for dispatch optimization. This development leads to the central methodological question of whether an RL-based approach can retain optimization quality while better representing operational complexity.
 
-This thesis compares the techno-economic results produced by an RL agent against a conventional MILP framework for a hybrid biomass power-to-methanol plant in South Africa across different scenarios and case studies. The goal is to understand the role of RL in complex Power-to-X industrial processes and benchmark its current performance against an industrial-standard framework.
+This question is especially relevant because MILP simplifies complex systems into linear approximations, which can reduce result accuracy when critical nonlinear behavior is present. A representative example is hydrogen tank operation, where the relationship between hydrogen level and efficiency is nonlinear because compression energy requirements increase at higher tank levels. Accordingly, this thesis investigates the effect of integrating this nonlinear tank behavior into the proposed system and evaluates its impact on the techno-economic results produced by the RL agent. Capturing this level of detail is not readily integrated into a MILP formulation and can become a significant limitation in complex polygeneration systems with nonlinear interactions across components and reactions.
+
+Against this background, this thesis compares the techno-economic results produced by an RL agent with those from a conventional MILP framework for a hybrid biomass power-to-methanol plant in South Africa across different scenarios and case studies. The goal is to clarify the role of RL in complex Power-to-X industrial processes and benchmark its current performance against an industrial-standard framework.
 
 \section{Introduction to Company}
 
-\begin{itemize}
-\item This master's thesis research is conducted at FEV Europe GmbH in the energy+resources department.
-\item FEV Europe GmbH is a leading expert in automotive industries, known for benchmarking and consulting services, and is now supporting innovation in the energy sector.
-\item This thesis supports identification of an efficient optimization tool for innovative energy solutions in complex polygeneration plants for future FEV Europe GmbH projects.
-\end{itemize}
+This master's thesis research is conducted at FEV Europe GmbH in the energy+resources department. FEV Europe GmbH is a leading expert in the automotive industry, widely known for benchmarking and consulting services, and is now supporting innovation in the energy sector. Within this context, the thesis contributes to identifying an efficient optimization framework for innovative energy solutions in complex polygeneration plants for future FEV Europe GmbH projects.
 
 \section{Objective}
 
-\begin{itemize}
-\item Run and analyze the two optimization frameworks under different scenarios.
-\item Evaluate whether a non-linear physical model with an RL agent converges to significantly different component sizing/layout than MILP, and whether this changes techno-economic performance metrics such as CAPEX, OPEX, and LCOM.
-\item Identify reasons behind discrepancies, or lack thereof, depending on simulation outcomes.
-\item Conclude whether one framework is better overall or whether suitability is scenario-dependent.
-\end{itemize}
+This thesis systematically runs and analyzes two optimization frameworks under different scenarios to evaluate whether a nonlinear physical model with an RL agent yields significantly different component sizing and layout than MILP. It further assesses whether such differences translate into changes in techno-economic performance metrics, including CAPEX, OPEX, and LCOM. Based on the simulation outcomes, the study then identifies the reasons behind observed discrepancies, or the lack thereof, and determines whether one framework appears consistently better overall or whether framework suitability is scenario-dependent.
 
-Expected impact:
-
-\begin{itemize}
-\item Better framework selection for hybrid methanol synthesis plants.
-\item Easier optimal-framework identification for other industrial systems.
-\item Increased accuracy or reduced effort for similar optimization processes.
-\item Better understanding of where and how RL agents should be applied in polygeneration systems.
-\end{itemize}
+This comparative study is expected to provide a clearer understanding of performance differences between the industrial-standard MILP framework and the novel AI-based RL alternative. Building on this understanding, the thesis seeks to establish a more grounded perspective on the robustness and overall performance of each framework when applied to a complex polygeneration system.
 
 \section{Thesis Configuration}
 
-\begin{itemize}
-\item Chapter 2 discusses state-of-the-art research on RL for optimizing complex industrial processes or power systems, and introduces related comparative studies from the literature.
-\item Chapter 3 presents the steps used to compare these optimization frameworks. The comparison is conducted in multiple stages and explained in detail.
-\item Chapter 4 presents multistage comparison results for different scenarios and case studies, and introduces a generalization scoring approach to compare framework performance across aspects.
-\item Chapter 5 summarizes general findings while acknowledging limitations, assumptions, and considerations adopted in this thesis.
-\end{itemize}
+Chapter 2 reviews the state of the art in three areas: hybrid biomass power-to-methanol systems, MILP-based optimization strategies for complex energy systems, and recent RL applications for optimization in industrial plants and energy systems. Building on this foundation, Chapter 3 presents the methodology, including the selected hybrid biomass power-to-methanol system model, the Level 1 full-MILP reference approach, the Level 2 decoupled sizing and dispatch strategy using Bayesian optimization, and the Level 3 RL-based optimization strategy, together with the techno-economic parameters, scenarios, and KPIs considered. Chapter 4 then reports the benchmarking results for Levels 1, 2, and 3 across the defined scenarios and evaluates framework performance using the selected KPIs. Finally, Chapter 5 summarizes the main findings and discussion in line with the established thesis structure.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Thesis Writing Reviewer"
+  short_description: "Review thesis prose and rewrite with selectable section style profiles"
+  default_prompt: "Use $writing-editor-reviewer to review this thesis text and rewrite it with my chosen profile (story-like narrative, critical, concise, or persuasive but cautious) while preserving technical claims, LaTeX, and citations."
