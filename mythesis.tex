@@ -42,7 +42,7 @@
 \usepackage{lipsum}
 \usepackage[ruled,vlined,noresetcount]{algorithm2e}
 %\usepackage{algpseudocode}
-\usepackage[square, numbers, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers'
+\usepackage{cite} % IEEE-style numeric citations with sorting/compression
 
 \title{\ttitle} % Defines the thesis title - don't touch this
 
@@ -333,7 +333,7 @@ $a.s.$           & almost sure convergence of a random sequence\\
 
 \label{Bibliography}
 \setstretch{1}
-\bibliographystyle{unsrtnat}
+\bibliographystyle{IEEEtran}
 \bibliography{References/first_paper,References/second_paper}
 
 \end{document}
