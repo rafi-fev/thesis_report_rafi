@@ -101,7 +101,7 @@ When suggesting upgrades, prioritize:
 
 ## Personalization Profiles and Behaviors
 
-When rewrite is requested, adapt output using the selected profile:
+When rewrite is requested, adapt output using the selected profile:a
 
 - `story-like narrative`:
   - Build paragraph arcs with clear progression and smooth transitions.
