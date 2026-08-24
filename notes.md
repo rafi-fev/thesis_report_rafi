@@ -1,6 +1,6 @@
 # Learning goals
 - MILP rolling horizon (done)
-- Newly trained RL operation (done)
+- Newly trained RL operation (done) (done)
 - Different Bayesian Optimization tehcniques and how to configure them with Optuna (done)
 - General investmenet hub weather
 - Different state-of-the-art RL algorithms
