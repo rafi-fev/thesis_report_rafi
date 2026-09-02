@@ -1,0 +1,27 @@
+strict digraph {
+Storage_hydrogen_cg [label="Storage_hydrogen_cg", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=circle, fillcolor="#8338EC"];
+Conv_fuel_cell [label="Conv_fuel_cell", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=box, fillcolor="#4361EE"];
+Conv_electrolyzer [label="Conv_electrolyzer", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=box, fillcolor="#4361EE"];
+Source_water [label="Source_water", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=trapezium, fillcolor="#2A9D8F"];
+Sink_electricity_green [label="Sink_electricity_green", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=invtrapezium, fillcolor="#E76F51"];
+Storage_batteryStorage [label="Storage_batteryStorage", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=circle, fillcolor="#8338EC"];
+Conv_inverter [label="Conv_inverter", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=box, fillcolor="#4361EE"];
+Source_PV_electricity_green [label="Source_PV_electricity_green", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=trapezium, fillcolor="#2A9D8F"];
+Sink_Demand [label="Sink_Demand", style=filled, fontname=Arial, fontcolor=white, color="#1f1f1f", shape=invtrapezium, fillcolor="#E76F51"];
+Storage_hydrogen_cg -> Conv_fuel_cell [color="#222222", arrowsize=0.7, penwidth=1.00];
+Conv_fuel_cell -> Sink_electricity_green [color="#222222", arrowsize=0.7, penwidth=1.03];
+Conv_fuel_cell -> Storage_batteryStorage [color="#222222", arrowsize=0.7, penwidth=1.03];
+Conv_fuel_cell -> Conv_inverter [color="#222222", arrowsize=0.7, penwidth=1.03];
+Conv_fuel_cell -> Conv_electrolyzer [color="#222222", arrowsize=0.7, penwidth=1.03];
+Conv_electrolyzer -> Storage_hydrogen_cg [color="#222222", arrowsize=0.7, penwidth=1.00];
+Conv_electrolyzer -> Conv_fuel_cell [color="#222222", arrowsize=0.7, penwidth=1.00];
+Source_water -> Conv_electrolyzer [color="#222222", arrowsize=0.7, penwidth=1.00];
+Storage_batteryStorage -> Sink_electricity_green [color="#222222", arrowsize=0.7, penwidth=2.16];
+Storage_batteryStorage -> Conv_inverter [color="#222222", arrowsize=0.7, penwidth=2.16];
+Storage_batteryStorage -> Conv_electrolyzer [color="#222222", arrowsize=0.7, penwidth=1.10];
+Conv_inverter -> Sink_Demand [color="#222222", arrowsize=0.7, penwidth=3.02];
+Source_PV_electricity_green -> Sink_electricity_green [color="#222222", arrowsize=0.7, penwidth=4.20];
+Source_PV_electricity_green -> Storage_batteryStorage [color="#222222", arrowsize=0.7, penwidth=2.36];
+Source_PV_electricity_green -> Conv_inverter [color="#222222", arrowsize=0.7, penwidth=3.13];
+Source_PV_electricity_green -> Conv_electrolyzer [color="#222222", arrowsize=0.7, penwidth=1.10];
+}

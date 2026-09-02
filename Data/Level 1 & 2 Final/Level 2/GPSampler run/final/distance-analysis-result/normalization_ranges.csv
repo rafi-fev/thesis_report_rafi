@@ -1,0 +1,10 @@
+,range
+wt_scale,70.0
+pv_scale,150.0
+bess_scale,200.0
+electrolyzer_lvl2_scale,19.09545422178924
+cgh2_scale,10.0
+reformer_auto_scale,15000.0
+biogas_storage_scale,7.0
+genset_gas_scale,5.0
+meohsyn_syngas_scale,15000.0

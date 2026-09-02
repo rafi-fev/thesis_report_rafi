@@ -1,0 +1,75 @@
+=== Layout Distance and Case Plot Summary ===
+Input file: results\BO_case_results_Master_Thesis_johannesburg_base_2026.08.17_074240.xlsx
+Sheet: BO_case_results
+Run config file: config\run_configs\master_thesis_BO.json
+Selected plots: distance_cost_gap, case_vs_scales, case_vs_total_cost
+Plot 1 view mode: both
+Plot 1 cost-gap mode: relative
+Plot 1 per-tech x mode: minmax_value
+Plot 2 view mode: both
+Case identifier column: case_id
+Termination status column: termination_condition
+Included technologies from run config: wt, pv, bess, electrolyzer_lvl2, cgh2, reformer_auto, biogas_storage, genset_gas, meohsyn_syngas, distillery_syngas
+Excluded technologies from run config: storage_meoh, anaerobic_digester_lvl2, storage_o2_l
+Resolved design technologies: wt, pv, bess, electrolyzer_lvl2, cgh2, reformer_auto, biogas_storage, genset_gas, meohsyn_syngas, distillery_syngas
+Resolved design columns: wt_scale, pv_scale, bess_scale, electrolyzer_lvl2_scale, cgh2_scale, reformer_auto_scale, biogas_storage_scale, genset_gas_scale, meohsyn_syngas_scale, distillery_syngas_scale
+Selected subplot technologies: pv, bess, electrolyzer_lvl2, wt, reformer_auto, biogas_storage, cgh2, genset_gas
+Selected subplot columns: pv_scale, bess_scale, electrolyzer_lvl2_scale, wt_scale, reformer_auto_scale, biogas_storage_scale, cgh2_scale, genset_gas_scale
+
+Termination status counts (normalized):
+- optimal: 298
+- infeasible: 2
+- <blank>: 1
+
+Plot 1 per-technology mode:
+- Components plotted: 8
+- X-mode: minmax_value
+
+Distance-cost analysis (optimal rows only, global distance view):
+- Total valid optimal cases in distance analysis: 298
+- Global optimum index: 209
+- Global optimum case_id: 207.0
+- Global optimum objective_value: 804.013440
+
+Counts within relative optimum cost gap thresholds:
+- <= 1%: 1
+- <= 3%: 11
+- <= 5%: 29
+
+Far-but-cheap count (rel_cost_gap <= 5% and layout_distance >= 75th percentile): 0
+
+Normalization ranges used:
+- wt_scale: 67.586833
+- pv_scale: 145.933523
+- bess_scale: 226.899501
+- electrolyzer_lvl2_scale: 47.134860
+- cgh2_scale: 9.826369
+- reformer_auto_scale: 19938.000000
+- biogas_storage_scale: 6.901369
+- genset_gas_scale: 4.988670
+- meohsyn_syngas_scale: 21653.000000
+- distillery_syngas_scale: 21610.000000
+
+Example rows (best relative cost gap):
+ case_id  objective_value  layout_distance  abs_cost_gap  rel_cost_gap
+   207.0       804.013440         0.000000      0.000000      0.000000
+   200.0       812.381703         0.052082      8.368263      1.040811
+   253.0       814.499064         0.112153     10.485624      1.304160
+   251.0       817.264773         0.112343     13.251333      1.648148
+   259.0       817.702695         0.105756     13.689255      1.702615
+   254.0       818.173351         0.102204     14.159911      1.761154
+   250.0       818.278005         0.121797     14.264565      1.774170
+   261.0       818.860868         0.107388     14.847428      1.846664
+
+Output files:
+- results\distance-analysis-result\plot1_per_technology_minmax_value_vs_rel_cost_gap.png
+- results\distance-analysis-result\layout_distance_vs_rel_cost_gap.png
+- results\distance-analysis-result\near_optimal_but_structurally_different.csv
+- results\distance-analysis-result\structurally_similar_but_poor_cost.csv
+- results\distance-analysis-result\very_close_to_optimum.csv
+- results\distance-analysis-result\top10_far_but_cheap_contributions.csv
+- results\distance-analysis-result\rmse_with_layout_distance_and_cost_gaps.csv
+- results\distance-analysis-result\normalization_ranges.csv
+- results\distance-analysis-result\case_id_vs_normalized_scales_components.png
+- results\distance-analysis-result\case_id_vs_aggregate_normalized_scale.png
+- results\distance-analysis-result\case_id_vs_total_costs_optimal.png
