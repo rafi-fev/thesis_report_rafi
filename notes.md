@@ -10,10 +10,13 @@
 - Finish the level 1 and level 2 comparison section of chapter 4
 
 ## TODO
-2. Fix the BO introduction in chapter 3 (Done)
-3. Update chapter 3 RL parameterization and description (Done)
-4. Level 3 TODO
-5. Continue writing (Polish comparative analysis methodology and start chapter 4)
+- Fix the BO introduction in chapter 3 (Done)
+- Update chapter 3 RL parameterization and description (Done)
+- Fix the BO mode of level 2
+    - Make distillery an aux technology that is dependent on MeOH synthesis
+    - Rerun GPsampler with 500 trials
+- Level 3 TODO
+- Continue writing (Polish comparative analysis methodology and start chapter 4)
 
 ## Level 3 TODO
 	- Fix AWE and H2SS parameterization to at least be close
