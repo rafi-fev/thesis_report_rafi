@@ -29,3 +29,6 @@
 
 ### Methodology
 
+## Future Outlook
+- RL vs Rolling Horizon for live dispatch optimization 
+
