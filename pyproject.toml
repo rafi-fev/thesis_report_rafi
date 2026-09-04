@@ -1,0 +1,15 @@
+[project]
+name = "rafi-thesis-report-densys"
+version = "0.1.0"
+description = "Analysis and figure-generation scripts for the DENSYS master thesis report."
+readme = "docs/notes.md"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "openpyxl>=3.1",
+    "pandas>=2.1",
+]
+
+[tool.uv]
+package = false

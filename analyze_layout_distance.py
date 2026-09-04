@@ -48,27 +48,51 @@ import pandas as pd
 #results/BO_case_results_Master_Thesis_johannesburg_base_2026.08.17_074240.xlsx
 
 #C:\D\models\BPtMeOH_comparison_thesis\results\BO_case_results_Master_Thesis_johannesburg_base_2026.09.01_204326FinalFinal.xlsx
-INPUT_FILE = Path("./results/BO_case_results_Master_Thesis_johannesburg_base_2026.09.01_204326FinalFinal.xlsx")
+INPUT_FILE = Path("Data\\Level 1 & 2 Final\\Level 2\\GPSampler run\\final\\BO_case_results_Master_Thesis_johannesburg_base_2026.09.01_204326FinalFinal.xlsx")
 INPUT_SHEET = "BO_case_results"
-OUTPUT_DIR = Path("./results/distance-analysis-result")
-RUN_CONFIG_FILE = Path("./config/run_configs/master_thesis_BO.json")
+OUTPUT_DIR = Path("Figures\\Chapter 4\\distance-analysis-result")
+RUN_CONFIG_FILE = Path("Data\\Level 1 & 2 Final\\master_thesis_BO.json")
 
 # Plot toggles.
-PLOTS_TO_DRAW = ["distance_cost_gap", "case_vs_scales", "case_vs_total_cost"] #"distance_cost_gap", "case_vs_scales", "case_vs_total_cost"
+PLOTS_TO_DRAW = ["case_vs_total_cost", "lcom_vs_component", "case_vs_scales"] #"distance_cost_gap", "case_vs_scales", "case_vs_total_cost", "lcom_vs_component"
 PLOT1_VIEW_MODE = "both"  # "global_distance" | "per_technology" | "both"
 PLOT1_COST_GAP_MODE = "relative"  # "relative" | "absolute"
 PLOT1_PER_TECH_X_MODE = "minmax_value"  # "delta_to_optimum" | "minmax_value"
-PLOT2_VIEW_MODE = "both"  # "component_subplots" | "aggregate" | "both"
+PLOT2_VIEW_MODE = "component_subplots"  # "component_subplots" | "aggregate" | "both"
+
+# Plot 3 (case vs objective) labeling. The objective value is LCOM in current runs.
+PLOT3_TITLE = "Case ID vs LCOM"
+PLOT3_Y_LABEL = "LCOM"
+# Unit shown on the LCOM axis label for the case-vs-LCOM plot, e.g. "$/ton".
+PLOT3_Y_UNIT = "$/ton"
+
+# LCOM vs single-component sizing plot (absolute sizing only).
+LCOM_VS_COMPONENT_TECH = "electrolyzer_lvl2"
+LCOM_Y_LABEL = "LCOM"
+# Units for the LCOM (y) and component-sizing (x) axis labels.
+LCOM_Y_UNIT = "$/ton"
+LCOM_COMPONENT_UNIT = "MW"
+# Y-axis scaling to reveal variation across trials.
+# "linear" | "log". Log scale compresses the large-LCOM outliers.
+LCOM_Y_SCALE = "log"
+# Optional upper LCOM cap (in y-axis units) to zoom into low-LCOM trials.
+# Set to a number (e.g. 1000.0) to clip, or None to keep all trials.
+LCOM_Y_MAX: float | None = None
+
+# Output image format(s) for saved figures. Provide any subset of {"png", "svg"}.
+OUTPUT_IMAGE_FORMATS: list[str] = ["svg"]
+FIGURE_DPI = 300
 
 # Subplot technology selection.
 # Use "all" or a list like ["pv", "bess", "electrolyzer_lvl1"].
-SUBPLOT_TECHNOLOGIES: str | list[str] = ["pv", "bess", "electrolyzer_lvl2", "wt", "reformer_auto", "biogas_storage", "cgh2", "genset_gas"]
+SUBPLOT_TECHNOLOGIES: str | list[str] = ["electrolyzer_lvl2", "pv", "reformer_auto", "wt", "bess"]
 
-VALID_PLOTS = {"distance_cost_gap", "case_vs_scales", "case_vs_total_cost"}
+VALID_PLOTS = {"distance_cost_gap", "case_vs_scales", "case_vs_total_cost", "lcom_vs_component"}
 VALID_PLOT1_VIEW_MODE = {"global_distance", "per_technology", "both"}
 VALID_PLOT1_COST_GAP_MODE = {"relative", "absolute"}
 VALID_PLOT1_PER_TECH_X_MODE = {"delta_to_optimum", "minmax_value"}
 VALID_PLOT2_VIEW_MODE = {"component_subplots", "aggregate", "both"}
+VALID_IMAGE_FORMATS = {"png", "svg"}
 PLOT2_ALLOWED_STATUSES = {"optimal", "infeasible"}
 
 
@@ -137,6 +161,20 @@ def validate_runtime_configuration() -> list[str]:
         raise ValueError(
             f"Invalid `PLOT2_VIEW_MODE`: {PLOT2_VIEW_MODE!r}. "
             f"Valid options: {sorted(VALID_PLOT2_VIEW_MODE)}."
+        )
+
+    if not isinstance(OUTPUT_IMAGE_FORMATS, list) or not OUTPUT_IMAGE_FORMATS:
+        raise ValueError(
+            "`OUTPUT_IMAGE_FORMATS` must be a non-empty list of image format strings."
+        )
+    normalized_formats = _unique_preserve_order(
+        [str(fmt).strip().lower() for fmt in OUTPUT_IMAGE_FORMATS if str(fmt).strip() != ""]
+    )
+    invalid_formats = [fmt for fmt in normalized_formats if fmt not in VALID_IMAGE_FORMATS]
+    if invalid_formats:
+        raise ValueError(
+            f"Invalid image formats in `OUTPUT_IMAGE_FORMATS`: {invalid_formats}. "
+            f"Valid options: {sorted(VALID_IMAGE_FORMATS)}."
         )
 
     if isinstance(SUBPLOT_TECHNOLOGIES, str):
@@ -507,12 +545,43 @@ def format_component_label(column_name: str) -> str:
     return column_name.replace("_scale", "").replace("_", " ").title()
 
 
+def resolve_output_formats() -> list[str]:
+    """Return the de-duplicated, normalized list of configured image formats."""
+    return _unique_preserve_order(
+        [str(fmt).strip().lower() for fmt in OUTPUT_IMAGE_FORMATS if str(fmt).strip() != ""]
+    )
+
+
+def save_figure(fig: plt.Figure, output_stem: Path) -> list[Path]:
+    """Save a figure to every configured image format and return written paths.
+
+    Parameters
+    ----------
+    fig : plt.Figure
+        Figure to persist.
+    output_stem : Path
+        Target path without a file extension. One file per configured format
+        is written using the format as the file suffix.
+
+    Returns
+    -------
+    list[Path]
+        Paths of the files written.
+    """
+    written: list[Path] = []
+    for fmt in resolve_output_formats():
+        output_path = output_stem.with_suffix(f".{fmt}")
+        fig.savefig(output_path, dpi=FIGURE_DPI, format=fmt)
+        written.append(output_path)
+    return written
+
+
 def make_distance_cost_gap_plot(
     df: pd.DataFrame,
     global_opt_index: int,
-    output_path: Path,
+    output_stem: Path,
     cost_gap_mode: str,
-) -> None:
+) -> list[Path]:
     """Create and save the layout distance versus cost-gap plot."""
     if cost_gap_mode == "relative":
         y_col = "rel_cost_gap"
@@ -532,7 +601,7 @@ def make_distance_cost_gap_plot(
         color="tab:blue",
         edgecolors="white",
         linewidths=0.5,
-        label="Optimal DOE cases",
+        label="BO trials",
     )
     plt.scatter(
         df.loc[global_opt_index, "layout_distance"],
@@ -551,8 +620,9 @@ def make_distance_cost_gap_plot(
     plt.grid(True, linestyle="--", alpha=0.4)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
+    written = save_figure(plt.gcf(), output_stem)
     plt.close()
+    return written
 
 
 def make_plot1_per_technology_subplots(
@@ -561,8 +631,8 @@ def make_plot1_per_technology_subplots(
     component_cols: list[str],
     cost_gap_mode: str,
     x_mode: str,
-    output_path: Path,
-) -> None:
+    output_stem: Path,
+) -> list[Path]:
     """Plot plot-1 per-technology view as subplots (optimal-only rows)."""
     if cost_gap_mode == "relative":
         y_col = "rel_cost_gap"
@@ -616,7 +686,7 @@ def make_plot1_per_technology_subplots(
             color="tab:blue",
             edgecolors="white",
             linewidths=0.5,
-            label="Optimal DOE cases" if idx == 0 else None,
+            label="BO trials" if idx == 0 else None,
             zorder=3,
         )
         axis.scatter(
@@ -651,15 +721,16 @@ def make_plot1_per_technology_subplots(
     axes_array[-1].set_xlabel(x_label)
     fig.suptitle(f"Plot 1 Per-Technology: {title_suffix} (Optimal Cases)")
     fig.tight_layout(rect=[0, 0, 1, 0.98])
-    fig.savefig(output_path, dpi=300)
+    written = save_figure(fig, output_stem)
     plt.close(fig)
+    return written
 
 
 def make_case_vs_scales_component_subplots(
     df_sorted: pd.DataFrame,
     component_norm_cols: dict[str, str],
-    output_path: Path,
-) -> None:
+    output_stem: Path,
+) -> list[Path]:
     """Plot case ID vs normalized scales with one subplot per component."""
     components = list(component_norm_cols.keys())
     num_components = len(components)
@@ -716,15 +787,16 @@ def make_case_vs_scales_component_subplots(
     axes_array[-1].set_xlabel("Case ID")
     apply_sparse_case_ticks(axes_array[-1], df_sorted)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=300)
+    written = save_figure(fig, output_stem)
     plt.close(fig)
+    return written
 
 
 def make_case_vs_scales_aggregate_plot(
     df_sorted: pd.DataFrame,
     aggregate_col: str,
-    output_path: Path,
-) -> None:
+    output_stem: Path,
+) -> list[Path]:
     """Plot case ID versus aggregate normalized scaling index."""
     x_values = df_sorted["_x_position"].to_numpy()
     y_values = df_sorted[aggregate_col].to_numpy(dtype=float)
@@ -767,16 +839,28 @@ def make_case_vs_scales_aggregate_plot(
     axis.legend(loc="upper right")
     apply_sparse_case_ticks(axis, df_sorted)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=300)
+    written = save_figure(fig, output_stem)
     plt.close(fig)
+    return written
+
+
+def _label_with_unit(base_label: str, unit: str | None) -> str:
+    """Append a unit in square brackets to an axis label when a unit is provided."""
+    unit_text = "" if unit is None else str(unit).strip()
+    if unit_text == "":
+        return base_label
+    return f"{base_label} [{unit_text}]"
 
 
 def make_case_vs_total_cost_plot(
     df_sorted: pd.DataFrame,
     cost_col: str,
-    output_path: Path,
-) -> None:
-    """Plot case ID versus total costs for optimal cases only."""
+    output_stem: Path,
+    y_label: str,
+    title: str,
+    y_unit: str | None = None,
+) -> list[Path]:
+    """Plot case ID versus the objective value for optimal cases only."""
     x_values = df_sorted["_x_position"].to_numpy()
     y_values = df_sorted[cost_col].to_numpy(dtype=float)
 
@@ -790,7 +874,7 @@ def make_case_vs_total_cost_plot(
         color="tab:blue",
         edgecolors="white",
         linewidths=0.5,
-        label="Optimal DOE cases",
+        label="BO trials",
         zorder=3,
     )
 
@@ -803,19 +887,99 @@ def make_case_vs_total_cost_plot(
         marker="*",
         edgecolors="black",
         linewidths=0.8,
-        label="Minimum total cost",
+        label=f"Minimum {y_label}",
         zorder=5,
     )
 
     axis.set_xlabel("Case ID")
-    axis.set_ylabel(cost_col)
-    axis.set_title("Case ID vs Total Costs (Optimal Cases)")
+    axis.set_ylabel(_label_with_unit(y_label, y_unit))
+    axis.set_title(title)
     axis.grid(True, linestyle="--", alpha=0.35)
     axis.legend(loc="best")
     apply_sparse_case_ticks(axis, df_sorted)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=300)
+    written = save_figure(fig, output_stem)
     plt.close(fig)
+    return written
+
+
+def make_lcom_vs_component_plot(
+    df: pd.DataFrame,
+    global_opt_index: int,
+    component_col: str,
+    cost_col: str,
+    y_label: str,
+    output_stem: Path,
+    y_unit: str | None = None,
+    component_unit: str | None = None,
+    y_scale: str = "linear",
+    y_max: float | None = None,
+) -> list[Path]:
+    """Plot objective (LCOM) versus one component's absolute sizing.
+
+    The y-axis can use a log scale and/or an upper LCOM cap to better reveal the
+    spread across trials whose LCOM values otherwise compress against large outliers.
+    """
+    component_label = format_component_label(component_col)
+
+    plot_df = df
+    clipped_count = 0
+    if y_max is not None:
+        mask = df[cost_col].astype(float) <= float(y_max)
+        clipped_count = int((~mask).sum())
+        plot_df = df[mask].copy()
+        if plot_df.empty:
+            raise ValueError(
+                f"`LCOM_Y_MAX` ({y_max}) removed all rows; nothing to plot."
+            )
+
+    y_values = plot_df[cost_col].astype(float)
+    absolute_values = plot_df[component_col].astype(float)
+
+    opt_in_view = global_opt_index in plot_df.index
+    opt_y = float(df.loc[global_opt_index, cost_col])
+    opt_abs = float(df.loc[global_opt_index, component_col])
+
+    fig, axis = plt.subplots(figsize=(9, 6))
+    axis.scatter(
+        absolute_values,
+        y_values,
+        s=36,
+        alpha=0.75,
+        color="tab:blue",
+        edgecolors="white",
+        linewidths=0.5,
+        label="BO trials",
+    )
+    if opt_in_view:
+        axis.scatter(
+            opt_abs,
+            opt_y,
+            s=140,
+            color="red",
+            marker="*",
+            edgecolors="black",
+            linewidths=0.8,
+            label=f"Minimum {y_label}",
+            zorder=5,
+        )
+
+    if y_scale == "log":
+        axis.set_yscale("log")
+
+    axis.set_xlabel(_label_with_unit(f"{component_label} sizing", component_unit))
+    axis.set_ylabel(_label_with_unit(y_label, y_unit))
+    axis.grid(True, which="both", linestyle="--", alpha=0.4)
+    axis.legend(loc="best")
+
+    title = f"{y_label} vs {component_label} Sizing (Optimal Cases)"
+    if y_max is not None:
+        title = f"{title}\n{y_label} <= {y_max:g} {y_unit or ''}".rstrip()
+    fig.suptitle(title)
+    fig.tight_layout(rect=[0, 0, 1, 0.98])
+    written = save_figure(fig, output_stem)
+    plt.close(fig)
+    return written
 
 
 def main() -> None:
@@ -826,6 +990,7 @@ def main() -> None:
     draw_plot1 = "distance_cost_gap" in selected_plots
     draw_plot2 = "case_vs_scales" in selected_plots
     draw_plot3 = "case_vs_total_cost" in selected_plots
+    draw_plot_lcom = "lcom_vs_component" in selected_plots
     draw_plot1_global = draw_plot1 and PLOT1_VIEW_MODE in {"global_distance", "both"}
     draw_plot1_per_tech = draw_plot1 and PLOT1_VIEW_MODE in {"per_technology", "both"}
 
@@ -837,11 +1002,11 @@ def main() -> None:
         raise ValueError("Input sheet is empty after dropping fully empty rows.")
 
     termination_col = _find_column(df_raw.columns, ["termination_condition"])
-    if termination_col is None and (draw_plot1 or draw_plot2 or draw_plot3):
+    if termination_col is None and (draw_plot1 or draw_plot2 or draw_plot3 or draw_plot_lcom):
         raise ValueError("Missing required column: `termination_condition`.")
 
     cost_col = _find_column(df_raw.columns, ["objective_value", "objective_value"])
-    if cost_col is None and (draw_plot1 or draw_plot3):
+    if cost_col is None and (draw_plot1 or draw_plot3 or draw_plot_lcom):
         raise ValueError("Could not find a cost column (`total_cost` or `total_costs`).")
 
     case_col = choose_identifier_column(df_raw)
@@ -856,6 +1021,8 @@ def main() -> None:
         raise ValueError("No `optimal` rows available for `distance_cost_gap` plotting.")
     if draw_plot3 and df_optimal_raw.empty:
         raise ValueError("No `optimal` rows available for `case_vs_total_cost` plotting.")
+    if draw_plot_lcom and df_optimal_raw.empty:
+        raise ValueError("No `optimal` rows available for `lcom_vs_component` plotting.")
     if draw_plot2 and df_plot2_raw.empty:
         raise ValueError(
             "No rows with termination status in {'optimal', 'infeasible'} "
@@ -867,7 +1034,7 @@ def main() -> None:
     tech_to_col: dict[str, str] = {}
     selected_subplot_techs: list[str] = []
     subplot_cols: list[str] = []
-    if draw_plot1 or draw_plot2:
+    if draw_plot1 or draw_plot2 or draw_plot_lcom:
         design_techs, design_cols, tech_to_col = resolve_design_columns_from_run_config(
             df_columns=df_raw.columns,
             included_techs=included_techs,
@@ -878,6 +1045,17 @@ def main() -> None:
             available_technologies=design_techs,
         )
         subplot_cols = [tech_to_col[technology] for technology in selected_subplot_techs]
+
+    lcom_component_col: str | None = None
+    if draw_plot_lcom:
+        lcom_tech_key = str(LCOM_VS_COMPONENT_TECH).strip()
+        tech_to_col_lower = {key.lower(): col for key, col in tech_to_col.items()}
+        lcom_component_col = tech_to_col_lower.get(lcom_tech_key.lower())
+        if lcom_component_col is None:
+            raise ValueError(
+                f"`LCOM_VS_COMPONENT_TECH` ({LCOM_VS_COMPONENT_TECH!r}) is not a resolved "
+                f"design technology. Available: {_format_list(list(tech_to_col.keys()))}."
+            )
 
     generated_files: list[Path] = []
     summary_lines = [
@@ -890,13 +1068,14 @@ def main() -> None:
         f"Plot 1 cost-gap mode: {PLOT1_COST_GAP_MODE}",
         f"Plot 1 per-tech x mode: {PLOT1_PER_TECH_X_MODE}",
         f"Plot 2 view mode: {PLOT2_VIEW_MODE}",
+        f"Output image formats: {_format_list(resolve_output_formats())}",
         f"Case identifier column: {case_col}",
         f"Termination status column: {termination_col}",
         f"Included technologies from run config: {_format_list(included_techs)}",
         f"Excluded technologies from run config: {_format_list(excluded_techs)}",
     ]
 
-    if draw_plot1 or draw_plot2:
+    if draw_plot1 or draw_plot2 or draw_plot_lcom:
         summary_lines.extend(
             [
                 f"Resolved design technologies: {_format_list(design_techs)}",
@@ -933,19 +1112,19 @@ def main() -> None:
         )
 
         if draw_plot1_per_tech:
-            plot1_per_tech_path = OUTPUT_DIR / (
+            plot1_per_tech_stem = OUTPUT_DIR / (
                 f"plot1_per_technology_{PLOT1_PER_TECH_X_MODE}_vs_"
-                f"{'rel' if PLOT1_COST_GAP_MODE == 'relative' else 'abs'}_cost_gap.png"
+                f"{'rel' if PLOT1_COST_GAP_MODE == 'relative' else 'abs'}_cost_gap"
             )
-            make_plot1_per_technology_subplots(
+            plot1_per_tech_files = make_plot1_per_technology_subplots(
                 df=df_plot1_cost_gap,
                 global_opt_index=global_opt_index,
                 component_cols=subplot_cols,
                 cost_gap_mode=PLOT1_COST_GAP_MODE,
                 x_mode=PLOT1_PER_TECH_X_MODE,
-                output_path=plot1_per_tech_path,
+                output_stem=plot1_per_tech_stem,
             )
-            generated_files.append(plot1_per_tech_path)
+            generated_files.extend(plot1_per_tech_files)
             summary_lines.extend(
                 [
                     "",
@@ -970,16 +1149,16 @@ def main() -> None:
             )
 
             if PLOT1_COST_GAP_MODE == "relative":
-                plot1_path = OUTPUT_DIR / "layout_distance_vs_rel_cost_gap.png"
+                plot1_stem = OUTPUT_DIR / "layout_distance_vs_rel_cost_gap"
             else:
-                plot1_path = OUTPUT_DIR / "layout_distance_vs_abs_cost_gap.png"
-            make_distance_cost_gap_plot(
+                plot1_stem = OUTPUT_DIR / "layout_distance_vs_abs_cost_gap"
+            plot1_files = make_distance_cost_gap_plot(
                 df_metrics,
                 global_opt_index=global_opt_index,
-                output_path=plot1_path,
+                output_stem=plot1_stem,
                 cost_gap_mode=PLOT1_COST_GAP_MODE,
             )
-            generated_files.append(plot1_path)
+            generated_files.extend(plot1_files)
 
             p75_dist = float(df_metrics["layout_distance"].quantile(0.75))
             p10_dist = float(df_metrics["layout_distance"].quantile(0.10))
@@ -1108,24 +1287,24 @@ def main() -> None:
             component_norm_cols[design_col] = norm_col
 
         if PLOT2_VIEW_MODE in {"component_subplots", "both"}:
-            plot2_components_path = OUTPUT_DIR / "case_id_vs_normalized_scales_components.png"
-            make_case_vs_scales_component_subplots(
+            plot2_components_stem = OUTPUT_DIR / "case_id_vs_normalized_scales_components"
+            plot2_components_files = make_case_vs_scales_component_subplots(
                 df_sorted=df_plot2_sorted,
                 component_norm_cols=component_norm_cols,
-                output_path=plot2_components_path,
+                output_stem=plot2_components_stem,
             )
-            generated_files.append(plot2_components_path)
+            generated_files.extend(plot2_components_files)
 
         if PLOT2_VIEW_MODE in {"aggregate", "both"}:
             aggregate_raw = df_plot2_sorted[list(component_norm_cols.values())].sum(axis=1)
             df_plot2_sorted["aggregate_normalized_scale"] = minmax_normalize_series(aggregate_raw)
-            plot2_aggregate_path = OUTPUT_DIR / "case_id_vs_aggregate_normalized_scale.png"
-            make_case_vs_scales_aggregate_plot(
+            plot2_aggregate_stem = OUTPUT_DIR / "case_id_vs_aggregate_normalized_scale"
+            plot2_aggregate_files = make_case_vs_scales_aggregate_plot(
                 df_sorted=df_plot2_sorted,
                 aggregate_col="aggregate_normalized_scale",
-                output_path=plot2_aggregate_path,
+                output_stem=plot2_aggregate_stem,
             )
-            generated_files.append(plot2_aggregate_path)
+            generated_files.extend(plot2_aggregate_files)
 
     if draw_plot3:
         df_plot3 = prepare_numeric_dataframe(df_optimal_raw, numeric_cols=[cost_col])
@@ -1134,9 +1313,42 @@ def main() -> None:
                 "No numeric-valid optimal rows for plot 3 after cleaning total cost column."
             )
         df_plot3_sorted = sort_by_case_identifier(df_plot3, case_col=case_col)
-        plot3_path = OUTPUT_DIR / "case_id_vs_total_costs_optimal.png"
-        make_case_vs_total_cost_plot(df_plot3_sorted, cost_col=cost_col, output_path=plot3_path)
-        generated_files.append(plot3_path)
+        plot3_stem = OUTPUT_DIR / "case_id_vs_lcom_optimal"
+        plot3_files = make_case_vs_total_cost_plot(
+            df_plot3_sorted,
+            cost_col=cost_col,
+            output_stem=plot3_stem,
+            y_label=PLOT3_Y_LABEL,
+            title=PLOT3_TITLE,
+            y_unit=PLOT3_Y_UNIT,
+        )
+        generated_files.extend(plot3_files)
+
+    if draw_plot_lcom:
+        df_lcom = prepare_numeric_dataframe(
+            df_optimal_raw, numeric_cols=[cost_col, lcom_component_col]
+        )
+        if df_lcom.empty:
+            raise ValueError(
+                "No numeric-valid optimal rows for `lcom_vs_component` after cleaning columns."
+            )
+        lcom_opt_index = int(df_lcom[cost_col].idxmin())
+        lcom_stem = OUTPUT_DIR / (
+            f"lcom_vs_{lcom_component_col}_absolute"
+        )
+        lcom_files = make_lcom_vs_component_plot(
+            df=df_lcom,
+            global_opt_index=lcom_opt_index,
+            component_col=lcom_component_col,
+            cost_col=cost_col,
+            y_label=LCOM_Y_LABEL,
+            output_stem=lcom_stem,
+            y_unit=LCOM_Y_UNIT,
+            component_unit=LCOM_COMPONENT_UNIT,
+            y_scale=LCOM_Y_SCALE,
+            y_max=LCOM_Y_MAX,
+        )
+        generated_files.extend(lcom_files)
 
     unique_generated_files = list(dict.fromkeys(generated_files))
     summary_lines.extend(["", "Output files:"])

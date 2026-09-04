@@ -1,0 +1,29 @@
+=== Layout Distance and Case Plot Summary ===
+Input file: Data\Level 1 & 2 Final\Level 2\GPSampler run\final\BO_case_results_Master_Thesis_johannesburg_base_2026.09.01_204326FinalFinal.xlsx
+Sheet: BO_case_results
+Run config file: Data\Level 1 & 2 Final\master_thesis_BO.json
+Selected plots: case_vs_total_cost, lcom_vs_component, case_vs_scales
+Plot 1 view mode: both
+Plot 1 cost-gap mode: relative
+Plot 1 per-tech x mode: minmax_value
+Plot 2 view mode: component_subplots
+Output image formats: svg
+Case identifier column: case_id
+Termination status column: termination_condition
+Included technologies from run config: wt, pv, bess, electrolyzer_lvl2, cgh2, reformer_auto, biogas_storage, genset_gas, meohsyn_syngas
+Excluded technologies from run config: storage_meoh, anaerobic_digester_lvl2, storage_o2_l
+Resolved design technologies: wt, pv, bess, electrolyzer_lvl2, cgh2, reformer_auto, biogas_storage, genset_gas, meohsyn_syngas
+Resolved design columns: wt_scale, pv_scale, bess_scale, electrolyzer_lvl2_scale, cgh2_scale, reformer_auto_scale, biogas_storage_scale, genset_gas_scale, meohsyn_syngas_scale
+Selected subplot technologies: electrolyzer_lvl2, pv, reformer_auto, wt, bess
+Selected subplot columns: electrolyzer_lvl2_scale, pv_scale, reformer_auto_scale, wt_scale, bess_scale
+
+Termination status counts (normalized):
+- optimal: 400
+- <blank>: 1
+
+Plot 1 artifacts were skipped because `distance_cost_gap` is not selected in `PLOTS_TO_DRAW`.
+
+Output files:
+- Figures\Chapter 4\distance-analysis-result\case_id_vs_normalized_scales_components.svg
+- Figures\Chapter 4\distance-analysis-result\case_id_vs_lcom_optimal.svg
+- Figures\Chapter 4\distance-analysis-result\lcom_vs_electrolyzer_lvl2_scale_absolute.svg

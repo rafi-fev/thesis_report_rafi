@@ -1,0 +1,202 @@
+{
+  "simulation": {
+    "time_start": "2025-01-01 00:00:00",
+    "time_end": "2025-12-31 22:00:00",
+    "ts": 1,
+    "site": "johannesburg",
+    "technology_set": "Master_Thesis",
+    "scenario": "base",
+    "optimization_mode": "IB",
+    "force_linear_cost_assumption": true
+  },
+  "_documentation": {
+    "overview": "Full linear IB config for Master_Thesis with MeOH-path sizing as decision variables.",
+    "objective_note": "Uses optimization.objective='total_cost'.",
+    "fixed_components_note": "Only storage_meoh, anaerobic_digester_lvl2 and storage_o2_l are fixed.",
+    "meoh_sales_note": "Methanol sink sale price is set via assumptions.methanol_sink_sale_price and converted from mass basis (USD/t) to sink-flow basis using assumptions.methanol_density."
+  },
+  "inputs": {
+    "streams": {
+      "path": "./data/{scenario}/Params_Streams.xlsx"
+    },
+    "pv": {
+      "enabled": true,
+      "path": "data/pv_wind_power_profiles_johannesburg_openmeteo_hourly_20250101_20251231.csv",
+      "column_time": "time",
+      "column_data": "pv_power_norm_0_1",
+      "timestamp_format": "%Y-%m-%dT%H:%M",
+      "skip_rows": 0
+    },
+    "wind": {
+      "enabled": true,
+      "path": "data/pv_wind_power_profiles_johannesburg_openmeteo_hourly_20250101_20251231.csv",
+      "column_time": "time",
+      "column_data": "wind_speed_10m_ms",
+      "timestamp_format": "%Y-%m-%dT%H:%M",
+      "skip_rows": 0
+    },
+    "grid_price": {
+      "enabled": false,
+      "path": "data/Grid_price_data/Grid_price_2018_DUMMY.xlsx",
+      "sheet": "1",
+      "time_col_idx": 1,
+      "import_col_idx": 2,
+      "export_col_idx": 3
+    }
+  },
+  "activations": {
+    "enabled_technologies_override": {}
+  },
+  "assumptions": {
+    "methanol_sink_sale_price": {
+      "value": 778.8,
+      "unit": "USD/t"
+    },
+    "methanol_density": {
+      "value": 0.792,
+      "unit": "t/m^3"
+    }
+  },
+  "optimization": {
+    "objective": "total_cost",
+    "fixed_technologies_with_values": {
+      "storage_meoh": {
+        "value": 288,
+        "unit": "m^3"
+      },
+      "anaerobic_digester_lvl2": {
+        "value": 20000,
+        "unit": "t/year"
+      },
+      "storage_o2_l": {
+        "value": 0.0,
+        "unit": "m^3"
+      }
+    },
+    "variable_technology_specs": {
+      "wt": {
+        "type": "continuous",
+        "min": 0,
+        "max": 70,
+        "unit": "MW"
+      },
+      "pv": {
+        "type": "continuous",
+        "min": 0,
+        "max": 150,
+        "unit": "MW"
+      },
+      "bess": {
+        "type": "continuous",
+        "min": 0,
+        "max": 200,
+        "unit": "MWh"
+      },
+      "electrolyzer_lvl2": {
+        "type": "continuous",
+        "min": 0,
+        "max": 20,
+        "unit": "MW"
+      },
+      "cgh2": {
+        "type": "continuous",
+        "min": 0,
+        "max": 10,
+        "unit": "t"
+      },
+      "reformer_auto": {
+        "type": "continuous",
+        "min": 5000,
+        "max": 20000,
+        "unit": "t/year"
+      },
+      "biogas_storage": {
+        "type": "continuous",
+        "min": 0,
+        "max": 7,
+        "unit": "t"
+      },
+      "genset_gas": {
+        "type": "continuous",
+        "min": 0,
+        "max": 5,
+        "unit": "MW"
+      },
+      "meohsyn_syngas": {
+        "type": "continuous",
+        "min": 20000,
+        "max": 35000,
+        "unit": "m3/year"
+      }
+    },
+    "fixed_one_case": {
+      "enabled": false,
+      "technologies": {
+        "wt": {
+          "value": 0,
+          "unit": "MW"
+        },
+        "pv": {
+          "value": 52.17157,
+          "unit": "MW"
+        },
+        "bess": {
+          "value": 169.05674,
+          "unit": "MWh"
+        },
+        "anaerobic_digester_lvl2": {
+          "value": 20000.0,
+          "unit": "t/year"
+        },
+        "reformer_auto": {
+          "value": 17711.32225,
+          "unit": "t/year"
+        },
+        "electrolyzer_lvl2": {
+          "value": 9.49321,
+          "unit": "MW"
+        },
+        "storage_o2_l": {
+          "value": 0.0,
+          "unit": "m^3"
+        },
+        "cgh2": {
+          "value": 0.65522,
+          "unit": "t"
+        },
+        "biogas_storage": {
+          "value": 4.60647,
+          "unit": "t"
+        },
+        "meohsyn_syngas": {
+          "value": 29543.12324,
+          "unit": "m3/year"
+        },
+        "storage_meoh": {
+          "value": 288.0,
+          "unit": "m^3"
+        },
+        "genset_gas": {
+          "value": 0.16835,
+          "unit": "MW"
+        }
+      }
+    },
+    "linear": {
+      "use_case_maximum": true
+    },
+    "doe": {
+      "final_number_cases": 100,
+      "exact_case_count": false,
+      "max_runtime": 60
+    },
+    "bo": {
+      "bo_sampler": "GPSampler",
+      "n_trials": 500,
+      "n_startup_trials": 40,
+      "n_jobs": 1,
+      "penalty_cost": 5000,
+      "sampler_seed": 42
+    }
+  }
+}
