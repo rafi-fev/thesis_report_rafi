@@ -730,6 +730,7 @@ def make_case_vs_scales_component_subplots(
     df_sorted: pd.DataFrame,
     component_norm_cols: dict[str, str],
     output_stem: Path,
+    cost_col: str,
 ) -> list[Path]:
     """Plot case ID vs normalized scales with one subplot per component."""
     components = list(component_norm_cols.keys())
@@ -742,6 +743,15 @@ def make_case_vs_scales_component_subplots(
     status_series = df_sorted["_termination_condition_norm"]
     optimal_mask = status_series.eq("optimal").to_numpy()
     infeasible_mask = status_series.eq("infeasible").to_numpy()
+
+    # Locate the minimum-LCOM case among optimal rows for the red star marker.
+    min_lcom_position: float | None = None
+    if optimal_mask.any() and cost_col in df_sorted.columns:
+        cost_values = pd.to_numeric(df_sorted[cost_col], errors="coerce").to_numpy(dtype=float)
+        masked_cost = np.where(optimal_mask, cost_values, np.nan)
+        if not np.all(np.isnan(masked_cost)):
+            min_lcom_row = int(np.nanargmin(masked_cost))
+            min_lcom_position = float(x_values[min_lcom_row])
 
     for idx, component in enumerate(components):
         axis = axes_array[idx]
@@ -759,7 +769,7 @@ def make_case_vs_scales_component_subplots(
                 color="tab:blue",
                 edgecolors="white",
                 linewidths=0.5,
-                label="Optimal" if idx == 0 else None,
+                label="BO trials" if idx == 0 else None,
                 zorder=3,
             )
         if infeasible_mask.any():
@@ -773,6 +783,20 @@ def make_case_vs_scales_component_subplots(
                 linewidths=1.2,
                 label="Infeasible" if idx == 0 else None,
                 zorder=4,
+            )
+
+        if min_lcom_position is not None:
+            min_lcom_index = int(np.where(x_values == min_lcom_position)[0][0])
+            axis.scatter(
+                min_lcom_position,
+                y_values[min_lcom_index],
+                s=140,
+                color="red",
+                marker="*",
+                edgecolors="black",
+                linewidths=0.8,
+                label="Minimum LCOM" if idx == 0 else None,
+                zorder=5,
             )
 
         axis.set_ylabel(format_component_label(component))
@@ -1292,6 +1316,7 @@ def main() -> None:
                 df_sorted=df_plot2_sorted,
                 component_norm_cols=component_norm_cols,
                 output_stem=plot2_components_stem,
+                cost_col=cost_col,
             )
             generated_files.extend(plot2_components_files)
 

@@ -42,18 +42,24 @@ def generate_bayesian_optimization_figure():
     # -------------------------------------------------------------------------
     # 3. Mathematical Ground Truth & Gaussian Process Surrogate Simulation
     # -------------------------------------------------------------------------
+    # Minimization objective: this is the negated version of the classic
+    # maximization demo, so the global structure is inverted into valleys.
+    def objective(x):
+        return -(np.sin(x) / 2.0 - ((10.0 - x) ** 2) / 50.0 + 2.0)
+
     # Dense domain
     X = np.linspace(0, 20, 1000).reshape(-1, 1)
-    y = (np.sin(X) / 2.0 - ((10.0 - X) ** 2) / 50.0 + 2.0).ravel()
+    y = objective(X).ravel()
 
     # The 5 sequential queries of Bayesian Optimization + initial observation
     # Points queried: x = [0.0, 2.36, 3.00, 6.25, 8.55]
     X_train = np.array([0.0, 2.36, 3.00, 6.25, 8.55]).reshape(-1, 1)
-    y_train = (np.sin(X_train) / 2.0 - ((10.0 - X_train) ** 2) / 50.0 + 2.0).ravel()
+    y_train = objective(X_train).ravel()
 
-    # Optimum candidate query (x = 7.55, y = 2.36 - global peak)
-    x_opt = 7.55
-    y_opt = float(np.sin(x_opt) / 2.0 - ((10.0 - x_opt) ** 2) / 50.0 + 2.0)
+    # Current optimum for a minimization problem is the lowest observed value.
+    i_opt = int(np.argmin(y_train))
+    x_opt = float(X_train[i_opt, 0])
+    y_opt = float(y_train[i_opt])
 
     # GP Regression with Matérn 3/2 Kernel
     length_scale = 3.2
@@ -130,7 +136,7 @@ def generate_bayesian_optimization_figure():
         edgecolors='#FFFFFF',
         linewidth=1.5,
         s=120,
-        label=r'Current optimum $(x^+, y^+)$',
+        label=r'Current minimum $(x^+, y^+)$',
         zorder=8
     )
     # Highlight accent ring around optimum
@@ -149,7 +155,7 @@ def generate_bayesian_optimization_figure():
     # 5. Styling, Grid, Axis Labels & Typography
     # -------------------------------------------------------------------------
     ax.set_title(
-        'Bayesian Optimization: Gaussian Process Surrogate After Five Queries',
+        'Bayesian Optimization: Gaussian Process Surrogate After Five Queries (Minimization)',
         fontsize=12.2,
         fontweight='bold',
         color=FEV_BLACK,
@@ -160,14 +166,19 @@ def generate_bayesian_optimization_figure():
     ax.set_ylabel(r'Objective value $y$', fontsize=10.5, color=FEV_GRAY_TEXT, labelpad=8)
 
     ax.set_xlim(-0.3, 20.3)
-    ax.set_ylim(-1.15, 2.95)
+    # Symmetric-to-inverted range: valleys now point downward.
+    y_all = np.concatenate([y, mu - sigma, mu + sigma])
+    y_lo, y_hi = float(np.min(y_all)), float(np.max(y_all))
+    pad = 0.12 * (y_hi - y_lo)
+    # Extra top headroom so the upper-left legend clears the curves.
+    ax.set_ylim(y_lo - pad, y_hi + 2.4 * pad)
 
     ax.tick_params(axis='both', which='major', labelsize=9.5, colors='#334155', length=4.5, width=1.0)
     ax.grid(True, linestyle='--', alpha=0.7, color='#E2E8F0', zorder=1)
 
     # Clean Card Legend with Crisp Border
     legend = ax.legend(
-        loc='upper right',
+        loc='upper left',
         frameon=True,
         framealpha=0.96,
         facecolor='#FFFFFF',
